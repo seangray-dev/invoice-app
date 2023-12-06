@@ -52,7 +52,6 @@ export async function fetchLatestInvoices() {
   }
 }
 
-// NEW
 export async function fetchHeaderData() {
   const invoiceCountPromise = sql`SELECT COUNT(*) FROM invoices`;
   const data = await Promise.all([invoiceCountPromise]);
