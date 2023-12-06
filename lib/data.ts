@@ -8,7 +8,7 @@ import {
   Revenue,
   User,
 } from './definitions';
-import { formatCurrency } from './functions';
+import { formatCurrency, formatDateToLocal } from './functions';
 
 export async function fetchRevenue() {
   // Add noStore() here prevent the response from being cached.
@@ -49,6 +49,42 @@ export async function fetchLatestInvoices() {
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch the latest invoices.');
+  }
+}
+
+// NEW
+export async function fetchHeaderData() {
+  const invoiceCountPromise = sql`SELECT COUNT(*) FROM invoices`;
+  const data = await Promise.all([invoiceCountPromise]);
+  const numberOfInvoices = Number(data[0].rows[0].count ?? '0');
+  return numberOfInvoices;
+}
+
+export async function fetchAllInvoices() {
+  try {
+    // Adjust the SQL query to match your table and column names
+    const result = await sql`
+      SELECT 
+        i.id, 
+        c.name AS client_name, 
+        i.payment_due AS due_date, 
+        i.status, 
+        i.total AS amount 
+      FROM 
+        invoices i
+      JOIN 
+        clients c ON i.client_id = c.id`;
+    return result.rows.map((row) => ({
+      id: row.id,
+      clientName: row.client_name,
+      dueDate: formatDateToLocal(row.due_date),
+      status: row.status,
+      amount: formatCurrency(row.amount),
+    }));
+  } catch (error) {
+    console.log('Error fetching invoices', error);
+
+    throw Error;
   }
 }
 
