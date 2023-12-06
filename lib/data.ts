@@ -61,7 +61,6 @@ export async function fetchHeaderData() {
 
 export async function fetchAllInvoices() {
   try {
-    // Adjust the SQL query to match your table and column names
     const result = await sql`
       SELECT 
         i.id, 
