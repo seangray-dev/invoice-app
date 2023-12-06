@@ -7,12 +7,11 @@ async function createTables(client) {
   const createInvoiceTables = await client.sql`
     CREATE TABLE IF NOT EXISTS "invoices" (
       id VARCHAR PRIMARY KEY,
-      createdAt DATE NOT NULL,
-      paymentDue DATE NOT NULL,
+      client_id UUID NOT NULL,
+      created_at DATE NOT NULL,
+      payment_due DATE NOT NULL,
       description VARCHAR NOT NULL,
-      paymentTerms INT NOT NULL,
-      clientName VARCHAR NOT NULL,
-      clientEmail VARCHAR NOT NULL,
+      payment_terms INT NOT NULL,
       status VARCHAR NOT NULL,
       total DECIMAL NOT NULL
     );
@@ -20,13 +19,13 @@ async function createTables(client) {
 
   const createSenderAdressTable = await client.sql`
     CREATE TABLE IF NOT EXISTS "sender_addresses" (
-      invoiceId VARCHAR,
+      invoice_id VARCHAR,
       street VARCHAR NOT NULL,
       city VARCHAR NOT NULL,
-      postCode VARCHAR NOT NULL,
+      postal_code VARCHAR(255),
       country VARCHAR NOT NULL,
-      PRIMARY KEY (invoiceId),
-      FOREIGN KEY (invoiceId) REFERENCES invoices (id)
+      PRIMARY KEY (invoice_id),
+      FOREIGN KEY (invoice_id) REFERENCES invoices (id)
     );
   `;
 
@@ -37,20 +36,20 @@ async function createTables(client) {
     email VARCHAR(255) NOT NULL UNIQUE,
     street VARCHAR(255),
     city VARCHAR(255),
-    postCode VARCHAR(255),
+    postal_code VARCHAR(255),
     country VARCHAR(255)
   );
 `;
 
   const createItemsTable = await client.sql`
     CREATE TABLE IF NOT EXISTS "items" (
-      invoiceId VARCHAR,
+      invoice_id VARCHAR,
       name VARCHAR NOT NULL,
       quantity INT NOT NULL,
       price DECIMAL NOT NULL,
       total DECIMAL NOT NULL,
-      PRIMARY KEY (invoiceId, name),
-      FOREIGN KEY (invoiceId) REFERENCES invoices (id)
+      PRIMARY KEY (invoice_id, name),
+      FOREIGN KEY (invoice_id) REFERENCES invoices (id)
     );
   `;
   return (
@@ -63,37 +62,43 @@ async function createTables(client) {
 
 async function seedDatabase() {
   const client = await db.connect();
-  const uniqueClients = new Map();
+  const clientIdsByEmail = new Map();
 
   try {
     await createTables(client);
 
     for (const invoice of invoices) {
-      if (!uniqueClients.has(invoice.clientEmail)) {
-        uniqueClients.set(invoice.clientEmail, true);
-        await client.sql`
-          INSERT INTO clients (name, email, street, city, postCode, country)
+      let clientId;
+      if (!clientIdsByEmail.has(invoice.clientEmail)) {
+        const insertResult = await client.sql`
+          INSERT INTO clients (name, email, street, city, postal_code, country)
           VALUES (${invoice.clientName}, ${invoice.clientEmail}, ${invoice.clientAddress.street}, ${invoice.clientAddress.city}, ${invoice.clientAddress.postCode}, ${invoice.clientAddress.country})
-          ON CONFLICT (email) DO NOTHING;
+          ON CONFLICT (email) DO NOTHING
+          RETURNING id;
         `;
+        clientId = insertResult.rows[0]?.id;
+        clientIdsByEmail.set(invoice.clientEmail, clientId);
+      } else {
+        clientId = clientIdsByEmail.get(invoice.clientEmail);
       }
+
       await client.sql`
-        INSERT INTO invoices (id, createdAt, paymentDue, description, paymentTerms, clientName, clientEmail, status, total)
-        VALUES (${invoice.id}, ${invoice.createdAt}, ${invoice.paymentDue}, ${invoice.description}, ${invoice.paymentTerms}, ${invoice.clientName}, ${invoice.clientEmail}, ${invoice.status}, ${invoice.total})
+        INSERT INTO invoices (id, created_at, payment_due, description, payment_terms, client_id, status, total)
+        VALUES (${invoice.id}, ${invoice.createdAt}, ${invoice.paymentDue}, ${invoice.description}, ${invoice.paymentTerms}, ${clientId}, ${invoice.status}, ${invoice.total})
         ON CONFLICT (id) DO NOTHING;
       `;
 
       await client.sql`
-        INSERT INTO sender_addresses (invoiceId, street, city, postCode, country)
+        INSERT INTO sender_addresses (invoice_id, street, city, postal_code, country)
         VALUES (${invoice.id}, ${invoice.senderAddress.street}, ${invoice.senderAddress.city}, ${invoice.senderAddress.postCode}, ${invoice.senderAddress.country})
-        ON CONFLICT (invoiceId) DO NOTHING;
+        ON CONFLICT (invoice_id) DO NOTHING;
       `;
 
       for (const item of invoice.items) {
         await client.sql`
-          INSERT INTO items (invoiceId, name, quantity, price, total)
+          INSERT INTO items (invoice_id, name, quantity, price, total)
           VALUES (${invoice.id}, ${item.name}, ${item.quantity}, ${item.price}, ${item.total})
-          ON CONFLICT (invoiceId, name) DO NOTHING;
+          ON CONFLICT (invoice_id, name) DO NOTHING;
         `;
       }
     }
