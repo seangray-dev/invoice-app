@@ -12,7 +12,14 @@ export default function RootLayout({
     <StoreProvider>
       <html lang="en">
         <body className={`${spartan.className} antialiased`}>
-          <ThemeProvider>{children}</ThemeProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+          </ThemeProvider>
         </body>
       </html>
     </StoreProvider>
