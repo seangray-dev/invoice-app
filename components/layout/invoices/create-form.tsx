@@ -1,5 +1,5 @@
-import { CustomerField } from '@/app/lib/definitions';
 import { Button } from '@/components/layout/button';
+import { CustomerField } from '@/lib/definitions';
 import {
   CheckIcon,
   ClockIcon,

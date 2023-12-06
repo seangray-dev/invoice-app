@@ -1,7 +1,7 @@
 'use client';
 
-import { CustomerField, InvoiceForm } from '@/app/lib/definitions';
 import { Button } from '@/components/layout/button';
+import { CustomerField, InvoiceForm } from '@/lib/definitions';
 import {
   CheckIcon,
   ClockIcon,
