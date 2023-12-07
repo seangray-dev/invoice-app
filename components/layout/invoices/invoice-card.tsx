@@ -1,5 +1,6 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Invoice } from '@/lib/definitions';
+import { ChevronRightIcon } from 'lucide-react';
 
 const statusStyles = {
   pending: {
@@ -22,27 +23,26 @@ export default function InvoiceCard(invoice: Invoice) {
     statusStyles[status as keyof typeof statusStyles] || {};
 
   return (
-    <Card className="dark:bg-nav border-none pt-6">
-      <CardContent className="flex flex-col gap-6">
-        <div className="flex justify-between">
+    <Card className="dark:bg-nav bg-card pt-6 transition-all duration-200 hover:cursor-pointer hover:border hover:border-primary hover:bg-border hover:dark:bg-border">
+      <CardContent className="flex flex-col justify-between gap-6 md:grid md:grid-cols-2 md:items-center">
+        <div className="flex justify-between md:justify-normal md:gap-7">
           <div className="text-muted-foreground">
             #<span className="font-bold text-foreground">{id}</span>
           </div>
-          <div className="muted-foreground text-sm">{clientName}</div>
+          <div className="text-sm text-muted-foreground">{clientName}</div>
         </div>
-        <div className="flex justify-between">
-          <div className="flex flex-col gap-2">
+        <div className="flex justify-between md:items-center md:justify-end md:gap-6">
+          <div className="flex flex-col gap-2 md:flex-row md:gap-6">
             <div className="text-sm text-muted-foreground">Due {dueDate}</div>
             <div className="font-bold">{amount}</div>
           </div>
-          <div>
-            <Card className={`border-none ${cardStyle}`}>
-              <CardContent className="py-4">
-                <p className={`font-bold capitalize ${textStyle}`}>
-                  • {status}
-                </p>
-              </CardContent>
-            </Card>
+          <div className="w-[104px]">
+            <div className={`flex justify-center rounded-sm py-3 ${cardStyle}`}>
+              <p className={`font-bold capitalize ${textStyle}`}>• {status}</p>
+            </div>
+          </div>
+          <div className="hidden md:block">
+            <ChevronRightIcon className="text-primary" />
           </div>
         </div>
       </CardContent>

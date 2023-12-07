@@ -15,28 +15,36 @@ import { useState } from 'react';
 
 type Checked = DropdownMenuCheckboxItemProps['checked'];
 
-export default function Header({ numberOfInvoices }: { numberOfInvoices: number }) {
+export default function Header({
+  numberOfInvoices,
+}: {
+  numberOfInvoices: number;
+}) {
   const [showPaid, setShowPaid] = useState<Checked>(true);
   const [showPending, setShowPending] = useState<Checked>(false);
   const [showDraft, setShowDraft] = useState<Checked>(false);
 
   return (
-    <section className="container mt-9 flex justify-between">
+    <section className="container mt-9 flex justify-between md:mt-[61px] 2xl:mt-[77px]">
       <div>
-        <h1 className="text-2xl font-bold">Invoices</h1>
-        <p className="text-muted-foreground">
-          <span>{numberOfInvoices} </span>Invoices
+        <h1 className="text-2xl font-bold md:mb-[6px] md:text-4xl">Invoices</h1>
+        <p className="text-sm text-muted-foreground">
+          <span className="hidden md:inline-block">There are</span>{' '}
+          <span>{numberOfInvoices}</span>{' '}
+          <span className="hidden md:inline-block">total </span>{' '}
+          <span>Invoices</span>
         </p>
       </div>
-      <div className="flex">
+      <div className="flex items-center gap-2 md:gap-10">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               variant={'ghost'}
-              className="flex items-center gap-2  text-base"
+              className="flex items-center gap-2 text-base"
             >
-              <div className="font-bold">
-                Filter <span className="hidden md:block">by status</span>
+              <div className="flex gap-1 font-bold">
+                <span>Filter</span>
+                <span className="hidden md:block">by status</span>
               </div>
               <div>
                 <ChevronDownIcon
@@ -70,9 +78,12 @@ export default function Header({ numberOfInvoices }: { numberOfInvoices: number 
             </DropdownMenuCheckboxItem>
           </DropdownMenuContent>
         </DropdownMenu>
-        <Button className="flex max-w-[90px] items-center gap-2 rounded-3xl">
+        <Button className="flex max-w-[90px] items-center gap-2 rounded-3xl py-6 md:max-w-[150px]">
           <PlusIcon size={16} className="rounded-full bg-white text-primary" />
-          <span className="font-bold">New</span>
+          <div className="flex gap-1 font-bold">
+            <span>New</span>
+            <span className="hidden md:block">Invoice</span>
+          </div>
         </Button>
       </div>
     </section>
