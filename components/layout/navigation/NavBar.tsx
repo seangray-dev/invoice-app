@@ -12,16 +12,20 @@ import logo from '@/public/assets/logo.svg';
 import { MoonIcon, SunIcon } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
+import Link from 'next/link';
 import ImageAvatar from '/assets/images/image-avatar.jpg';
 
 export default function NavBar() {
   const { setTheme } = useTheme();
 
   return (
-    <nav className="bg-nav flex justify-between 2xl:min-h-full 2xl:flex-col 2xl:rounded-r-[20px]">
-      <div className="flex h-[72px] w-[72px] items-center justify-center rounded-r-[20px] bg-primary 2xl:h-[103px] 2xl:w-[103px]">
+    <nav className="flex justify-between bg-nav 2xl:min-h-full 2xl:flex-col 2xl:rounded-r-[20px]">
+      <Link
+        href={'/'}
+        className="flex h-[72px] w-[72px] items-center justify-center rounded-r-[20px] bg-primary 2xl:h-[103px] 2xl:w-[103px]"
+      >
         <Image priority width={28} height={26} src={logo} alt="logo" />
-      </div>
+      </Link>
       <div className="flex items-center gap-6 2xl:flex-col 2xl:gap-8">
         <div className="flex h-full items-center border-r border-muted-foreground 2xl:w-full 2xl:justify-center 2xl:border-b 2xl:border-r-0">
           <DropdownMenu>
