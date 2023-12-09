@@ -1,7 +1,5 @@
 import { fetchAllInvoices, fetchHeaderData } from '@/lib/data';
-import Header from './header';
-import InvoicesTable from './invoices-table';
-import NoInvoices from './no-invoices';
+import InvoiceContainer from './invoice-container';
 
 export default async function Invoices() {
   const numberOfInvoices = await fetchHeaderData();
@@ -9,12 +7,10 @@ export default async function Invoices() {
 
   return (
     <div>
-      <Header numberOfInvoices={numberOfInvoices} />
-      {numberOfInvoices === 0 ? (
-        <NoInvoices />
-      ) : (
-        <InvoicesTable invoices={invoices} />
-      )}
+      <InvoiceContainer
+        numberOfInvoices={numberOfInvoices}
+        invoices={invoices}
+      />
     </div>
   );
 }

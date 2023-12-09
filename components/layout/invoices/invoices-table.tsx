@@ -7,7 +7,7 @@ type InvoicesTableProps = {
 
 export default function InvoicesTable({ invoices }: InvoicesTableProps) {
   return (
-    <section className="container mt-8 flex flex-col gap-4">
+    <section className="container mt-8 flex flex-col gap-4 md:mt-[55px] 2xl:mt-16">
       {invoices.map((invoice: Invoice) => (
         <InvoiceCard
           key={invoice.id}

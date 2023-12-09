@@ -9,21 +9,28 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { DropdownMenuCheckboxItemProps } from '@radix-ui/react-dropdown-menu';
 import { ChevronDownIcon, PlusIcon } from 'lucide-react';
-import { useState } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 
-type Checked = DropdownMenuCheckboxItemProps['checked'];
+type HeaderProps = {
+  numberOfInvoices: number;
+  showPaid: boolean;
+  setShowPaid: Dispatch<SetStateAction<boolean>>;
+  showPending: boolean;
+  setShowPending: Dispatch<SetStateAction<boolean>>;
+  showDraft: boolean;
+  setShowDraft: Dispatch<SetStateAction<boolean>>;
+};
 
 export default function Header({
   numberOfInvoices,
-}: {
-  numberOfInvoices: number;
-}) {
-  const [showPaid, setShowPaid] = useState<Checked>(true);
-  const [showPending, setShowPending] = useState<Checked>(false);
-  const [showDraft, setShowDraft] = useState<Checked>(false);
-
+  showPaid,
+  setShowPaid,
+  showPending,
+  setShowPending,
+  showDraft,
+  setShowDraft,
+}: HeaderProps) {
   return (
     <section className="container mt-9 flex justify-between md:mt-[61px] 2xl:mt-[77px]">
       <div>

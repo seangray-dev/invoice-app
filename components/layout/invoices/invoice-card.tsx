@@ -1,6 +1,7 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Invoice } from '@/lib/definitions';
 import { ChevronRightIcon } from 'lucide-react';
+import { useEffect } from 'react';
 
 const statusStyles = {
   pending: {
