@@ -5,8 +5,7 @@ export default function Page({ params }: { params: { id: string } }) {
   return (
     <>
       <NavBar />
-      <InvoiceDetails />
-      Invoice {params.id}
+      <InvoiceDetails id={params.id} />
     </>
   );
 }
