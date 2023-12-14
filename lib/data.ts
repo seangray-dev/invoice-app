@@ -86,6 +86,91 @@ export async function fetchAllInvoices() {
   }
 }
 
+export async function fetchInvoiceById(id: string) {
+  try {
+    // Fetch the main invoice details along with client information
+    const invoiceResult = await sql`
+      SELECT
+        i.id,
+        i.created_at,
+        i.payment_due,
+        i.description,
+        i.payment_terms,
+        i.status,
+        i.total,
+        c.name AS client_name,
+        c.email AS client_email,
+        c.street AS client_street,
+        c.city AS client_city,
+        c.postal_code AS client_postal_code,
+        c.country AS client_country,
+        sa.street AS sender_street,
+        sa.city AS sender_city,
+        sa.postal_code AS sender_postal_code,
+        sa.country AS sender_country
+      FROM
+        invoices i
+      JOIN
+        clients c ON i.client_id = c.id
+      LEFT JOIN
+        sender_addresses sa ON i.id = sa.invoice_id
+      WHERE
+        i.id = ${id}`;
+
+    // Check if the invoice exists
+    if (invoiceResult.rows.length === 0) {
+      return null;
+    }
+
+    const invoice = invoiceResult.rows[0];
+
+    // Fetch items for the invoice
+    const itemsResult = await sql`
+      SELECT
+        name,
+        quantity,
+        price,
+        total
+      FROM
+        items
+      WHERE
+        invoice_id = ${id}`;
+
+    return {
+      id: invoice.id,
+      createdAt: formatDateToLocal(invoice.created_at),
+      paymentDue: formatDateToLocal(invoice.payment_due),
+      description: invoice.description,
+      paymentTerms: invoice.payment_terms,
+      clientName: invoice.client_name,
+      clientEmail: invoice.client_email,
+      status: invoice.status,
+      senderAddress: {
+        street: invoice.sender_street,
+        city: invoice.sender_city,
+        postCode: invoice.sender_postal_code,
+        country: invoice.sender_country,
+      },
+      clientAddress: {
+        street: invoice.client_street,
+        city: invoice.client_city,
+        postCode: invoice.client_postal_code,
+        country: invoice.client_country,
+      },
+      items: itemsResult.rows.map((item) => ({
+        name: item.name,
+        quantity: item.quantity,
+        price: item.price,
+        total: item.total,
+      })),
+      total: formatCurrency(invoice.total),
+    };
+  } catch (error) {
+    console.log('Error fetching invoice by ID', error);
+    throw error;
+  }
+}
+
 export async function fetchCardData() {
   try {
     // You can probably combine these into a single SQL query
@@ -175,31 +260,6 @@ export async function fetchInvoicesPages(query: string) {
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch total number of invoices.');
-  }
-}
-
-export async function fetchInvoiceById(id: string) {
-  try {
-    const data = await sql<InvoiceForm>`
-      SELECT
-        invoices.id,
-        invoices.customer_id,
-        invoices.amount,
-        invoices.status
-      FROM invoices
-      WHERE invoices.id = ${id};
-    `;
-
-    const invoice = data.rows.map((invoice) => ({
-      ...invoice,
-      // Convert amount from cents to dollars
-      amount: invoice.amount / 100,
-    }));
-
-    return invoice[0];
-  } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch invoice.');
   }
 }
 
