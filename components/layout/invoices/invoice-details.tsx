@@ -1,25 +1,11 @@
 import { Card } from '@/components/ui/card';
 import { fetchInvoiceById } from '@/lib/data';
+import { statusStyles } from '@/lib/styles';
 import { ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
 import InvoiceActions from './invoice-actions';
 
-const statusStyles = {
-  pending: {
-    card: 'bg-orange-100',
-    text: 'text-orange-600',
-  },
-  paid: {
-    card: 'bg-green-100',
-    text: 'text-green-600',
-  },
-  draft: {
-    card: 'bg-gray-100',
-    text: 'text-gray-600',
-  },
-};
-
-export default async function InvoiceDetails({ id }) {
+export default async function InvoiceDetails({ id }: { id: string }) {
   const invoice = await fetchInvoiceById(id);
 
   if (!invoice) return <div>Loading...</div>;
@@ -45,7 +31,7 @@ export default async function InvoiceDetails({ id }) {
               </p>
             </div>
           </div>
-          <InvoiceActions />
+          <InvoiceActions invoice={invoice} />
         </Card>
         <Card className="border-none p-6 dark:bg-nav md:p-8 2xl:p-12">
           <div className="flex flex-col md:flex-row md:justify-between">
@@ -147,7 +133,7 @@ export default async function InvoiceDetails({ id }) {
         </Card>
       </div>
       <div className="md:hidden">
-        <InvoiceActions />
+        <InvoiceActions invoice={invoice} />
       </div>
     </>
   );

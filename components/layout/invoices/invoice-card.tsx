@@ -1,23 +1,8 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Invoice } from '@/lib/definitions';
+import { statusStyles } from '@/lib/styles';
 import { ChevronRightIcon } from 'lucide-react';
 import Link from 'next/link';
-import { useEffect } from 'react';
-
-const statusStyles = {
-  pending: {
-    card: 'bg-orange-100',
-    text: 'text-orange-600',
-  },
-  paid: {
-    card: 'bg-green-100',
-    text: 'text-green-600',
-  },
-  draft: {
-    card: 'bg-gray-100',
-    text: 'text-gray-600',
-  },
-};
 
 export default function InvoiceCard(invoice: Invoice) {
   const { id, clientName, dueDate, status, amount } = invoice;
