@@ -1,4 +1,4 @@
-import Search from '@/app/components/search';
+import Search from '@/app/components/invoices/search';
 import { lusitana } from '@/app/fonts/fonts';
 import {
   CustomersTableType,
