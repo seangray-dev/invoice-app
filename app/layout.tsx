@@ -1,7 +1,15 @@
-import { spartan } from '@/app/fonts/fonts';
-import '@/app/globals.css';
-import { StoreProvider } from './redux/StoreProvider';
-import { ThemeProvider } from './theme/theme-provider';
+import { inter } from '@/app/ui/fonts';
+import '@/app/ui/global.css';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: {
+    template: '%s | Acme Dashboard',
+    default: 'Acme Dashboard',
+  },
+  description: 'The official Next.js Learn Dashboard built with App Router.',
+  metadataBase: new URL('https://next-learn-dashboard.vercel.sh'),
+};
 
 export default function RootLayout({
   children,
@@ -9,19 +17,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <StoreProvider>
-      <html lang="en">
-        <body className={`${spartan.className} antialiased`}>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            {children}
-          </ThemeProvider>
-        </body>
-      </html>
-    </StoreProvider>
+    <html lang="en">
+      <body className={`${inter.className} antialiased`}>{children}</body>
+    </html>
   );
 }

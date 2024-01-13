@@ -1,116 +1,179 @@
 const { db } = require('@vercel/postgres');
-const { invoices } = require('./data');
+const {
+  invoices,
+  customers,
+  revenue,
+  users,
+} = require('../app/lib/placeholder-data.js');
+const bcrypt = require('bcrypt');
 
-async function createTables(client) {
-  await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
-
-  const createInvoiceTables = await client.sql`
-    CREATE TABLE IF NOT EXISTS "invoices" (
-      id VARCHAR PRIMARY KEY,
-      client_id UUID NOT NULL,
-      created_at DATE NOT NULL,
-      payment_due DATE NOT NULL,
-      description VARCHAR NOT NULL,
-      payment_terms INT NOT NULL,
-      status VARCHAR NOT NULL,
-      total DECIMAL NOT NULL
-    );
-  `;
-
-  const createSenderAdressTable = await client.sql`
-    CREATE TABLE IF NOT EXISTS "sender_addresses" (
-      invoice_id VARCHAR,
-      street VARCHAR NOT NULL,
-      city VARCHAR NOT NULL,
-      postal_code VARCHAR(255),
-      country VARCHAR NOT NULL,
-      PRIMARY KEY (invoice_id),
-      FOREIGN KEY (invoice_id) REFERENCES invoices (id)
-    );
-  `;
-
-  const createClientsTable = await client.sql`
-  CREATE TABLE IF NOT EXISTS "clients" (
-    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    street VARCHAR(255),
-    city VARCHAR(255),
-    postal_code VARCHAR(255),
-    country VARCHAR(255)
-  );
-`;
-
-  const createItemsTable = await client.sql`
-    CREATE TABLE IF NOT EXISTS "items" (
-      invoice_id VARCHAR,
-      name VARCHAR NOT NULL,
-      quantity INT NOT NULL,
-      price DECIMAL NOT NULL,
-      total DECIMAL NOT NULL,
-      PRIMARY KEY (invoice_id, name),
-      FOREIGN KEY (invoice_id) REFERENCES invoices (id)
-    );
-  `;
-  return (
-    createItemsTable,
-    createClientsTable,
-    createSenderAdressTable,
-    createInvoiceTables
-  );
-}
-
-async function seedDatabase() {
-  const client = await db.connect();
-  const clientIdsByEmail = new Map();
-
+async function seedUsers(client) {
   try {
-    await createTables(client);
+    await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
+    // Create the "users" table if it doesn't exist
+    const createTable = await client.sql`
+      CREATE TABLE IF NOT EXISTS users (
+        id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        email TEXT NOT NULL UNIQUE,
+        password TEXT NOT NULL
+      );
+    `;
 
-    for (const invoice of invoices) {
-      let clientId;
-      if (!clientIdsByEmail.has(invoice.clientEmail)) {
-        const insertResult = await client.sql`
-          INSERT INTO clients (name, email, street, city, postal_code, country)
-          VALUES (${invoice.clientName}, ${invoice.clientEmail}, ${invoice.clientAddress.street}, ${invoice.clientAddress.city}, ${invoice.clientAddress.postCode}, ${invoice.clientAddress.country})
-          ON CONFLICT (email) DO NOTHING
-          RETURNING id;
-        `;
-        clientId = insertResult.rows[0]?.id;
-        clientIdsByEmail.set(invoice.clientEmail, clientId);
-      } else {
-        clientId = clientIdsByEmail.get(invoice.clientEmail);
-      }
+    console.log(`Created "users" table`);
 
-      await client.sql`
-        INSERT INTO invoices (id, created_at, payment_due, description, payment_terms, client_id, status, total)
-        VALUES (${invoice.id}, ${invoice.createdAt}, ${invoice.paymentDue}, ${invoice.description}, ${invoice.paymentTerms}, ${clientId}, ${invoice.status}, ${invoice.total})
+    // Insert data into the "users" table
+    const insertedUsers = await Promise.all(
+      users.map(async (user) => {
+        const hashedPassword = await bcrypt.hash(user.password, 10);
+        return client.sql`
+        INSERT INTO users (id, name, email, password)
+        VALUES (${user.id}, ${user.name}, ${user.email}, ${hashedPassword})
         ON CONFLICT (id) DO NOTHING;
       `;
+      }),
+    );
 
-      await client.sql`
-        INSERT INTO sender_addresses (invoice_id, street, city, postal_code, country)
-        VALUES (${invoice.id}, ${invoice.senderAddress.street}, ${invoice.senderAddress.city}, ${invoice.senderAddress.postCode}, ${invoice.senderAddress.country})
-        ON CONFLICT (invoice_id) DO NOTHING;
-      `;
+    console.log(`Seeded ${insertedUsers.length} users`);
 
-      for (const item of invoice.items) {
-        await client.sql`
-          INSERT INTO items (invoice_id, name, quantity, price, total)
-          VALUES (${invoice.id}, ${item.name}, ${item.quantity}, ${item.price}, ${item.total})
-          ON CONFLICT (invoice_id, name) DO NOTHING;
-        `;
-      }
-    }
-
-    console.log('Database seeded successfully');
+    return {
+      createTable,
+      users: insertedUsers,
+    };
   } catch (error) {
-    console.error('Error seeding the database:', error);
-  } finally {
-    await client.end();
+    console.error('Error seeding users:', error);
+    throw error;
   }
 }
 
-seedDatabase().catch((error) => {
-  console.error('Failed to seed database:', error);
+async function seedInvoices(client) {
+  try {
+    await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
+
+    // Create the "invoices" table if it doesn't exist
+    const createTable = await client.sql`
+    CREATE TABLE IF NOT EXISTS invoices (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    customer_id UUID NOT NULL,
+    amount INT NOT NULL,
+    status VARCHAR(255) NOT NULL,
+    date DATE NOT NULL
+  );
+`;
+
+    console.log(`Created "invoices" table`);
+
+    // Insert data into the "invoices" table
+    const insertedInvoices = await Promise.all(
+      invoices.map(
+        (invoice) => client.sql`
+        INSERT INTO invoices (customer_id, amount, status, date)
+        VALUES (${invoice.customer_id}, ${invoice.amount}, ${invoice.status}, ${invoice.date})
+        ON CONFLICT (id) DO NOTHING;
+      `,
+      ),
+    );
+
+    console.log(`Seeded ${insertedInvoices.length} invoices`);
+
+    return {
+      createTable,
+      invoices: insertedInvoices,
+    };
+  } catch (error) {
+    console.error('Error seeding invoices:', error);
+    throw error;
+  }
+}
+
+async function seedCustomers(client) {
+  try {
+    await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
+
+    // Create the "customers" table if it doesn't exist
+    const createTable = await client.sql`
+      CREATE TABLE IF NOT EXISTS customers (
+        id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        image_url VARCHAR(255) NOT NULL
+      );
+    `;
+
+    console.log(`Created "customers" table`);
+
+    // Insert data into the "customers" table
+    const insertedCustomers = await Promise.all(
+      customers.map(
+        (customer) => client.sql`
+        INSERT INTO customers (id, name, email, image_url)
+        VALUES (${customer.id}, ${customer.name}, ${customer.email}, ${customer.image_url})
+        ON CONFLICT (id) DO NOTHING;
+      `,
+      ),
+    );
+
+    console.log(`Seeded ${insertedCustomers.length} customers`);
+
+    return {
+      createTable,
+      customers: insertedCustomers,
+    };
+  } catch (error) {
+    console.error('Error seeding customers:', error);
+    throw error;
+  }
+}
+
+async function seedRevenue(client) {
+  try {
+    // Create the "revenue" table if it doesn't exist
+    const createTable = await client.sql`
+      CREATE TABLE IF NOT EXISTS revenue (
+        month VARCHAR(4) NOT NULL UNIQUE,
+        revenue INT NOT NULL
+      );
+    `;
+
+    console.log(`Created "revenue" table`);
+
+    // Insert data into the "revenue" table
+    const insertedRevenue = await Promise.all(
+      revenue.map(
+        (rev) => client.sql`
+        INSERT INTO revenue (month, revenue)
+        VALUES (${rev.month}, ${rev.revenue})
+        ON CONFLICT (month) DO NOTHING;
+      `,
+      ),
+    );
+
+    console.log(`Seeded ${insertedRevenue.length} revenue`);
+
+    return {
+      createTable,
+      revenue: insertedRevenue,
+    };
+  } catch (error) {
+    console.error('Error seeding revenue:', error);
+    throw error;
+  }
+}
+
+async function main() {
+  const client = await db.connect();
+
+  await seedUsers(client);
+  await seedCustomers(client);
+  await seedInvoices(client);
+  await seedRevenue(client);
+
+  await client.end();
+}
+
+main().catch((err) => {
+  console.error(
+    'An error occurred while attempting to seed the database:',
+    err,
+  );
 });
