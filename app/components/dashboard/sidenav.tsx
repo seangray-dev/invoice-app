@@ -1,5 +1,5 @@
-import AcmeLogo from '@/app/components/acme-logo';
 import NavLinks from '@/app/components/dashboard/nav-links';
+import AcmeLogo from '@/app/components/slicebooks-logo';
 import { signOut } from '@/auth';
 import { PowerIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
