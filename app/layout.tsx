@@ -1,5 +1,5 @@
-import { inter } from '@/app/ui/fonts';
-import '@/app/ui/global.css';
+import { leagueSpartan } from '@/app/fonts/fonts';
+import '@/app/styles/global.css';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -18,7 +18,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} antialiased`}>{children}</body>
+      <body className={`${leagueSpartan.className} antialiased`}>
+        {children}
+      </body>
     </html>
   );
 }

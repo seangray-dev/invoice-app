@@ -1,8 +1,8 @@
 'use client';
 
+import { Button } from '@/app/components/button';
 import { createInvoice } from '@/app/lib/actions';
 import { CustomerField } from '@/app/lib/definitions';
-import { Button } from '@/app/ui/button';
 import {
   CheckIcon,
   ClockIcon,
