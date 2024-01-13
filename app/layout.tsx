@@ -1,6 +1,7 @@
 import { leagueSpartan } from '@/app/fonts/fonts';
 import '@/app/styles/global.css';
 import { Metadata } from 'next';
+import { ThemeProvider } from './components/theme/theme-provider';
 
 export const metadata: Metadata = {
   title: {
@@ -19,7 +20,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${leagueSpartan.className} antialiased`}>
-        {children}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );
