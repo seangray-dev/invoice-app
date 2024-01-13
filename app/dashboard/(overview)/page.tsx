@@ -6,7 +6,7 @@ import {
   LatestInvoicesSkeleton,
   RevenueChartSkeleton,
 } from '@/app/components/skeletons';
-import { lusitana } from '@/app/fonts/fonts';
+
 import { Metadata } from 'next';
 import { Suspense } from 'react';
 
@@ -17,9 +17,7 @@ export const metadata: Metadata = {
 export default async function Page() {
   return (
     <main>
-      <h1 className={`${lusitana.className} mb-4 text-xl md:text-2xl`}>
-        Dashboard
-      </h1>
+      <h1 className="mb-4 text-xl md:text-2xl">Dashboard</h1>
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <Suspense fallback={<CardsSkeleton />}>
           <CardWrapper />

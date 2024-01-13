@@ -1,4 +1,3 @@
-import { lusitana } from '@/app/fonts/fonts';
 import { fetchRevenue } from '@/app/lib/data';
 import { Revenue } from '@/app/lib/definitions';
 import { generateYAxis } from '@/app/lib/utils';
@@ -22,9 +21,7 @@ export default async function RevenueChart() {
 
   return (
     <div className="w-full md:col-span-4">
-      <h2 className={`${lusitana.className} mb-4 text-xl md:text-2xl`}>
-        Recent Revenue
-      </h2>
+      <h2 className="mb-4 text-xl md:text-2xl">Recent Revenue</h2>
       {/* NOTE: comment in this code when you get to this point in the course */}
 
       <div className="rounded-xl bg-gray-50 p-4">
