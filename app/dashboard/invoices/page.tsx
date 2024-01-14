@@ -1,4 +1,5 @@
 import { CreateInvoice } from '@/app/components/invoices/buttons';
+import FilterSelect from '@/app/components/invoices/filter-select';
 import Pagination from '@/app/components/invoices/pagination';
 import Search from '@/app/components/invoices/search';
 import Table from '@/app/components/invoices/table';
@@ -25,12 +26,20 @@ export default async function Page({
 
   return (
     <div className="w-full">
-      <div className="flex w-full items-center justify-between">
-        <h1 className="text-2xl">Invoices</h1>
-      </div>
+      <div className="flex w-full items-center justify-between"></div>
       <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
+        <div className="flex flex-col gap-1">
+          <h1 className="text-2xl font-bold">Invoices</h1>
+          {/* TODO: fetch number of all invoices here  */}
+          <p className="text-muted-foreground">7 Invoices</p>
+        </div>
+        <div className="flex gap-6">
+          <FilterSelect />
+          <CreateInvoice />
+        </div>
+      </div>
+      <div className="mt-6">
         <Search placeholder="Search invoices..." />
-        <CreateInvoice />
       </div>
       <Suspense key={query + currentPage} fallback={<InvoicesTableSkeleton />}>
         <Table query={query} currentPage={currentPage} />
