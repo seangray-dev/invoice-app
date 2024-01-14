@@ -1,11 +1,7 @@
 'use client';
 
-import {
-  DocumentDuplicateIcon,
-  HomeIcon,
-  UserGroupIcon,
-} from '@heroicons/react/24/outline';
 import clsx from 'clsx';
+import { BookOpenTextIcon, HomeIcon, UsersIcon } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -16,9 +12,9 @@ const links = [
   {
     name: 'Invoices',
     href: '/dashboard/invoices',
-    icon: DocumentDuplicateIcon,
+    icon: BookOpenTextIcon,
   },
-  { name: 'Customers', href: '/dashboard/customers', icon: UserGroupIcon },
+  { name: 'Customers', href: '/dashboard/customers', icon: UsersIcon },
 ];
 
 export default function NavLinks() {
@@ -28,18 +24,18 @@ export default function NavLinks() {
       {links.map((link) => {
         const LinkIcon = link.icon;
         return (
-          <Link
-            key={link.name}
-            href={link.href}
-            className={clsx(
-              'flex h-[48px] grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium text-muted-foreground hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3',
-              {
-                'text-primary': pathname === link.href,
-              },
-            )}
-          >
-            <LinkIcon className="w-6" />
-            <p className="hidden md:block">{link.name}</p>
+          <Link className="h-full 2xl:w-full" key={link.name} href={link.href}>
+            <div
+              className={clsx(
+                'flex h-full items-center gap-2 border-r border-muted-foreground pr-6 text-muted-foreground transition-all duration-300 hover:text-primary 2xl:flex-col 2xl:border-b 2xl:border-r-0 2xl:pb-6 2xl:pr-0',
+                {
+                  'text-primary': pathname === link.href,
+                },
+              )}
+            >
+              <LinkIcon className="h-5 w-5" />
+              <p className="hidden md:block">{link.name}</p>
+            </div>
           </Link>
         );
       })}

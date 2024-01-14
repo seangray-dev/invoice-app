@@ -1,5 +1,5 @@
 import LoginForm from '@/app/components/login/login-form';
-import SliceBooksLogo from '@/app/components/slicebooks-logo';
+import SliceBooksLogo from '@/app/components/nav/slicebooks-logo';
 
 export default function LoginPage() {
   return (
