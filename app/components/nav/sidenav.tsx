@@ -7,7 +7,7 @@ import SignOutBtn from './sign-out-btn';
 export default function SideNav() {
   return (
     <nav className="flex h-full w-full flex-col">
-      <div className="bg-nav flex h-[72px] h-full justify-between 2xl:h-full 2xl:flex-col">
+      <div className="bg-nav flex h-[72px]  justify-between 2xl:h-full 2xl:flex-col">
         <div className="flex items-center gap-6 2xl:flex-col">
           <div className="flex w-full justify-center bg-primary 2xl:rounded-r-none">
             <Link className="flex p-6" href="/">
