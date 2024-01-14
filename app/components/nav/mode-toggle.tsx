@@ -15,7 +15,7 @@ export function ModeToggle() {
   const { setTheme } = useTheme();
 
   return (
-    <div className="flex h-full items-center border-x border-muted-foreground px-6 2xl:w-full 2xl:justify-center 2xl:border-y 2xl:border-r-0 2xl:px-0 2xl:py-6">
+    <div className="flex h-full items-center border-x border-muted-foreground px-6 2xl:w-full 2xl:justify-center 2xl:border-x-0 2xl:border-y 2xl:px-0 2xl:py-6">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="flex p-0 hover:bg-transparent">
