@@ -1,5 +1,4 @@
 import Search from '@/app/components/invoices/search';
-import { lusitana } from '@/app/fonts/fonts';
 import {
   CustomersTableType,
   FormattedCustomersTable,
@@ -13,9 +12,7 @@ export default async function CustomersTable({
 }) {
   return (
     <div className="w-full">
-      <h1 className={`${lusitana.className} mb-8 text-xl md:text-2xl`}>
-        Customers
-      </h1>
+      <h1 className=" mb-8 text-xl md:text-2xl">Customers</h1>
       <Search placeholder="Search customers..." />
       <div className="mt-6 flow-root">
         <div className="overflow-x-auto">
