@@ -24,6 +24,9 @@ module.exports = {
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         nav: 'hsl(var(--nav))',
+        pending: 'hsl(var(--pending))',
+        paid: 'hsl(var(--paid))',
+        draft: 'hsl(var(--draft))',
         primary: {
           DEFAULT: 'hsl(var(--primary))',
           foreground: 'hsl(var(--primary-foreground))',
