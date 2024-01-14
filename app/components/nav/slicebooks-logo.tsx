@@ -11,7 +11,6 @@ export default function SliceBooksLogo() {
         height={40}
         width={40}
       />
-      {/* <p className="mt-2 hidden text-4xl">SliceBooks</p> */}
     </div>
   );
 }
