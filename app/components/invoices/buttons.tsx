@@ -37,7 +37,7 @@ export function ViewInvoice({ id }: { id: string }) {
       href={`/dashboard/invoices/${id}`}
       className="group hover:cursor-pointer"
     >
-      <div className="flex justify-end">
+      <div className="flex justify-center">
         <ChevronRightIcon
           size={16}
           className="text-primary transition-all duration-150 group-hover:scale-150"

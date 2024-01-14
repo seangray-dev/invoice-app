@@ -35,7 +35,7 @@ export default async function InvoicesTable({
                   <div className="mb-2 flex items-center">
                     <p className="font-bold">
                       <span className="text-muted-foreground">#</span>
-                      {invoice.id}
+                      {invoice.id.slice(0, 6)}...
                     </p>
                   </div>
                 </div>
@@ -66,20 +66,12 @@ export default async function InvoicesTable({
               <TableHead scope="col" className="px-4 py-5 sm:pl-6">
                 ID
               </TableHead>
-              <TableHead scope="col" className="px-3 py-5">
-                Date
-              </TableHead>
-              <TableHead scope="col" className="px-3 py-5">
-                Name
-              </TableHead>
-              <TableHead scope="col" className="px-3 py-5">
-                Amount
-              </TableHead>
-              <TableHead scope="col" className="px-3 py-5">
-                Status
-              </TableHead>
-              <TableHead scope="col" className="relative py-3 pl-6 pr-3">
-                <span className="sr-only">Edit</span>
+              <TableHead scope="col">Date</TableHead>
+              <TableHead scope="col">Name</TableHead>
+              <TableHead scope="col">Amount</TableHead>
+              <TableHead scope="col">Status</TableHead>
+              <TableHead scope="col" className="text-center">
+                View / Edit
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -90,7 +82,7 @@ export default async function InvoicesTable({
                   <div className="flex items-center gap-3">
                     <p className="font-bold">
                       <span className="text-muted-foreground">#</span>
-                      {invoice.id}
+                      {invoice.id.slice(0, 6)}...
                     </p>
                   </div>
                 </TableCell>
