@@ -60,7 +60,8 @@ export default async function InvoicesTable({
           ))}
         </div>
         {/* Table For md screens and up */}
-        <Table className="hidden min-w-full rounded-t-lg bg-card md:table">
+        {/* Have To Fix BG and Hover state for dark mode + Skeletons */}
+        <Table className="dark:bg-nav hidden min-w-full rounded-t-lg bg-card md:table">
           <TableHeader className="text-left text-sm">
             <TableRow>
               <TableHead scope="col" className="px-4 py-5 sm:pl-6">
@@ -77,7 +78,7 @@ export default async function InvoicesTable({
           </TableHeader>
           <TableBody>
             {invoices?.map((invoice) => (
-              <TableRow key={invoice.id} className="bg-card">
+              <TableRow key={invoice.id} className="dark:bg-nav bg-card">
                 <TableCell className="whitespace-nowrap py-3 pl-6 pr-3">
                   <div className="flex items-center gap-3">
                     <p className="font-bold">
