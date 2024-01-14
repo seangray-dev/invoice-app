@@ -23,6 +23,7 @@ export default async function InvoicesTable({
   return (
     <div className="mt-6 flow-root">
       <div className="inline-block min-w-full align-middle">
+        {/* Table for Mobile */}
         <div className="md:hidden">
           {invoices?.map((invoice) => (
             <div
@@ -58,6 +59,7 @@ export default async function InvoicesTable({
             </div>
           ))}
         </div>
+        {/* Table For md screens and up */}
         <Table className="hidden min-w-full rounded-t-lg bg-card md:table">
           <TableHeader className="text-left text-sm">
             <TableRow>
