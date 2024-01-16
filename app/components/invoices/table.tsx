@@ -1,5 +1,6 @@
 import { ViewInvoice } from '@/app/components/invoices/buttons';
 import InvoiceStatus from '@/app/components/invoices/status';
+import { Card, CardContent } from '@/app/components/ui/card';
 import {
   Table,
   TableBody,
@@ -10,6 +11,7 @@ import {
 } from '@/app/components/ui/table';
 import { fetchFilteredInvoices } from '@/app/lib/data';
 import { formatCurrency, formatDateToLocal } from '@/app/lib/utils';
+import Link from 'next/link';
 
 export default async function InvoicesTable({
   query,
@@ -21,42 +23,48 @@ export default async function InvoicesTable({
   const invoices = await fetchFilteredInvoices(query, currentPage);
 
   return (
-    <div className="mt-6 flow-root">
+    <div className="mt-8 flow-root">
       <div className="inline-block min-w-full align-middle">
         {/* Table for Mobile */}
-        <div className="md:hidden">
+        <div className="flex flex-col gap-4 md:hidden">
           {invoices?.map((invoice) => (
-            <div
+            <Link
               key={invoice.id}
-              className="mb-2 w-full rounded-md bg-white p-4"
+              className="focus:outline-primary"
+              title="View / Edit Invoice"
+              href={`/dashboard/invoices/${invoice.id}`}
             >
-              <div className="flex items-center justify-between pb-6">
-                <div>
-                  <div className="mb-2 flex items-center">
-                    <p className="font-bold">
-                      <span className="text-muted-foreground">#</span>
-                      {invoice.id.slice(0, 6)}...
-                    </p>
+              <Card className="dark:bg-nav bg-card pt-6 transition-all duration-200 hover:cursor-pointer hover:border hover:border-primary hover:bg-border hover:dark:bg-border">
+                <CardContent>
+                  <div className="flex items-center justify-between pb-6">
+                    <div>
+                      <div className="mb-2 flex items-center">
+                        <p className="font-bold">
+                          <span className="text-muted-foreground">#</span>
+                          {invoice.id.slice(0, 6)}...
+                        </p>
+                      </div>
+                    </div>
+                    <div>
+                      <div className="mb-2 flex items-center text-sm">
+                        <p>{invoice.name}</p>
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <div>
-                  <div className="mb-2 flex items-center text-sm text-muted-foreground">
-                    <p>{invoice.name}</p>
+                  <div className="flex w-full items-center justify-between pt-4">
+                    <div className="flex flex-col gap-2">
+                      <p className="text-sm text-muted-foreground">
+                        Due {formatDateToLocal(invoice.date)}
+                      </p>
+                      <p className="text-xl font-bold">
+                        {formatCurrency(invoice.amount)}
+                      </p>
+                    </div>
+                    <InvoiceStatus status={invoice.status} />
                   </div>
-                </div>
-              </div>
-              <div className="flex w-full items-center justify-between pt-4">
-                <div className="flex flex-col gap-2">
-                  <p className="text-sm text-muted-foreground">
-                    Date {formatDateToLocal(invoice.date)}
-                  </p>
-                  <p className="text-xl font-bold">
-                    {formatCurrency(invoice.amount)}
-                  </p>
-                </div>
-                <InvoiceStatus status={invoice.status} />
-              </div>
-            </div>
+                </CardContent>
+              </Card>
+            </Link>
           ))}
         </div>
         {/* Table For md screens and up */}
