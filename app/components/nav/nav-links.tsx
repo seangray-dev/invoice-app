@@ -24,19 +24,26 @@ export default function NavLinks() {
       {links.map((link) => {
         const LinkIcon = link.icon;
         return (
-          <Link className="h-full 2xl:w-full" key={link.name} href={link.href}>
-            <div
-              className={clsx(
-                'flex h-full items-center gap-2 border-r border-muted-foreground pr-6 text-muted-foreground transition-all duration-300 hover:text-primary 2xl:flex-col 2xl:border-b 2xl:border-r-0 2xl:pb-6 2xl:pr-0',
-                {
-                  'text-primary': pathname === link.href,
-                },
-              )}
+          <div>
+            <Link
+              className="h-full flex-grow focus:outline-primary 2xl:w-full"
+              key={link.name}
+              title={link.name}
+              href={link.href}
             >
-              <LinkIcon className="h-5 w-5" />
-              <p className="hidden md:block">{link.name}</p>
-            </div>
-          </Link>
+              <div
+                className={clsx(
+                  'flex h-full items-center text-muted-foreground transition-all duration-300 hover:text-primary md:gap-2 md:pr-6 2xl:flex-col 2xl:pb-6 2xl:pr-0',
+                  {
+                    'text-primary': pathname === link.href,
+                  },
+                )}
+              >
+                <LinkIcon className="mb-2 h-5 w-5" />
+                <p className="hidden text-center md:block">{link.name}</p>
+              </div>
+            </Link>
+          </div>
         );
       })}
     </>
